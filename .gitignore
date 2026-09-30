@@ -1,0 +1,83 @@
+# --- Segreti e configurazioni locali ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.python-version
+
+# --- Test, lint, type check ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Notebook ---
+.ipynb_checkpoints/
+
+# --- Dati (troppo pesanti / non redistribuibili) ---
+data/raw/
+data/processed/
+data/cache/
+*.parquet
+*.duckdb
+*.duckdb.wal
+*.csv
+!data/sample/*.csv
+!data/sample/*.parquet
+
+# --- Vector store, indici e database locali ---
+lancedb/
+chroma/
+.chroma/
+*.lance
+vector_store/
+
+# --- Modelli e checkpoint ---
+models/
+checkpoints/
+*.pt
+*.pth
+*.safetensors
+*.onnx
+*.bin
+
+# --- Tracciamento esperimenti e log ---
+mlruns/
+mlartifacts/
+wandb/
+langfuse/
+logs/
+*.log
+
+# --- Docker (volumi locali) ---
+docker-data/
+volumes/
+neo4j/data/
+neo4j/logs/
+redis-data/
+rabbitmq-data/
+mongo-data/
+
+# --- Report generati ---
+reports/_build/
+_site/
+.quarto/
+*_files/
+
+# --- IDE e sistema operativo ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
