@@ -11,6 +11,8 @@ dependencies = [
   "duckdb",
   "yfinance",
   "pyyaml",
+  "requests",
+  "python-dotenv",
 ]
 
 [project.optional-dependencies]
