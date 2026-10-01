@@ -13,6 +13,7 @@ dependencies = [
   "pyyaml",
   "requests",
   "python-dotenv",
+  "scikit-learn"
 ]
 
 [project.optional-dependencies]
