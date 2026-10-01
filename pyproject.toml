@@ -1,0 +1,26 @@
+[project]
+name = "stock-intelligence-agent"
+version = "0.1.0"
+description = "Synthesize and evaluate financial information with LLMs (demo, not advice)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "GPL-3.0-only" }
+dependencies = [
+  "pandas",
+  "pyarrow",
+  "duckdb",
+  "yfinance",
+  "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

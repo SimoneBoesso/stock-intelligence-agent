@@ -1,0 +1,22 @@
+benchmark: SPY
+tickers:
+  - AAPL
+  - MSFT
+  - GOOGL
+  - AMZN
+  - META
+  - NVDA
+  - BRK-B
+  - JPM
+  - V
+  - UNH
+  - XOM
+  - JNJ
+  - PG
+  - MA
+  - HD
+  - CVX
+  - ABBV
+  - MRK
+  - COST
+  - PEP
