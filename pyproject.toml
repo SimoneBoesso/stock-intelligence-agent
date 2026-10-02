@@ -13,7 +13,9 @@ dependencies = [
   "pyyaml",
   "requests",
   "python-dotenv",
-  "scikit-learn"
+  "scikit-learn",
+  "sentence-transformers",
+  "lancedb",
 ]
 
 [project.optional-dependencies]
