@@ -4,13 +4,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+MODEL_NAME = "openai/gpt-oss-20b"
+
+
 def call_llm(prompt: str) -> str:
     client = OpenAI(
         api_key=os.getenv("GROQ_API_KEY"),
         base_url="https://api.groq.com/openai/v1",
     )
     resp = client.chat.completions.create(
-        model="openai/gpt-oss-20b",  # oppure qwen/qwen3.8-27b, 
+        model=MODEL_NAME,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.2,
     )
