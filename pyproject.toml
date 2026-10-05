@@ -16,6 +16,8 @@ dependencies = [
   "scikit-learn",
   "sentence-transformers",
   "lancedb",
+  "pydantic",
+  "openai",
 ]
 
 [project.optional-dependencies]
