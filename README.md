@@ -11,11 +11,28 @@ A system to synthesize and evaluate financial information with LLMs, RAG, and re
 - An **analyst agent** produces a structured forecast (direction, confidence, rationale, sources).
 - Evaluate forecast quality honestly against baselines.
 
-**Forecast target (to be locked in):** 30-day return direction vs a benchmark (e.g. SPY).
+**Forecast target (locked):** 30-day excess return direction vs SPY — labels: `up` / `down`.
 
 **Framing:** a system to synthesize and evaluate financial information with LLMs — not a stock predictor.
 
-## Architecture
+## Status (current)
+
+Working local pipeline on **20 US large caps** (`config/universe.yaml`, benchmark SPY):
+
+| Area | State |
+|---|---|
+| **Data** | Prices (yfinance), EDGAR metadata/filings, Finnhub + GDELT news → Parquet |
+| **Baselines** | Features + logistic regression metrics-only; naive eval scripts |
+| **RAG** | LanceDB + `BAAI/bge-small-en-v1.5`; retrieval filters `published_at < forecast_date` |
+| **Agent** | Plain Python: prompt → Groq LLM → Pydantic `Forecast` (direction, confidence, rationale, sources) |
+| **Eval** | Smoke eval (`eval_smoke.py`) vs baselines; PIT unit tests |
+| **Forward test** | Daily job: refresh news/index + prices/labels → resolve → log forecasts → hit-rate report |
+
+**Not built yet:** queue/worker, Neo4j/GraphRAG, Streamlit, Docker Compose, FRED, LangGraph multi-step.
+
+**Golden rule:** every retrieval query filters `document_date < forecast_date`.
+
+## Architecture (target)
 
 ```
 Sources (yfinance, EDGAR, GDELT, Finnhub, FRED)
@@ -42,38 +59,54 @@ Sources (yfinance, EDGAR, GDELT, Finnhub, FRED)
             Evaluation / forward test / Streamlit dashboard
 ```
 
-**Golden rule:** every retrieval query filters `document_date < forecast_date`.
+Today the same ideas run as **scheduled scripts** (Parquet + LanceDB + Groq), without queue/graph/UI.
 
-## Planned stack
+## Stack in use
 
 | Layer | Choice |
 |---|---|
-| Language / data layer | Python, Parquet + DuckDB |
-| ETL orchestration | Prefect or scheduled scripts |
-| Embeddings | sentence-transformers (e.g. `bge-small`) |
-| Vector store | LanceDB or Chroma |
-| LLM | Gemini/Groq free tier or local Ollama |
-| Agent | LangGraph + Pydantic output |
-| Graph | Neo4j |
-| Cache / dedup | Redis |
-| Queue | RabbitMQ (or Kafka) |
-| Demo | Streamlit |
-| Infra | Docker Compose, GitHub Actions |
+| Language / data | Python ≥3.11, Parquet + DuckDB |
+| Embeddings / vector | sentence-transformers (`bge-small`), LanceDB |
+| LLM | Groq (`openai/gpt-oss-20b` via OpenAI-compatible client) |
+| Agent output | Pydantic |
+| Eval / baselines | pandas, scikit-learn |
+| Orchestration | scripts + optional cron (`docs/forward_cron.md`) |
+
+Planned later: Neo4j, Redis, RabbitMQ, LangGraph, Streamlit, Docker Compose — see roadmap.
 
 ## Data sources (US market, free tier)
 
-| Type | Source |
-|---|---|
-| Prices | yfinance (or Tiingo/Stooq) |
-| Fundamentals / filings | SEC EDGAR |
-| News | GDELT + Finnhub |
-| Macro | FRED / ALFRED |
+| Type | Source | In repo |
+|---|---|---|
+| Prices | yfinance | yes |
+| Fundamentals / filings | SEC EDGAR | yes (meta + transform) |
+| News | GDELT + Finnhub | yes |
+| Macro | FRED / ALFRED | not yet |
 
 Everything is archived locally from day one (see `.gitignore` for excluded paths).
 
+## Setup
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+cp .env.example .env   # set GROQ_API_KEY, FINNHUB_API_KEY, SEC_USER_AGENT
+```
+
+Forward-test daily job (Finnhub + GDELT → news index → prices/labels → resolve → log → report):
+
+```bash
+.venv/bin/python scripts/forward_daily.py --tickers AAPL,MSFT,PG
+```
+
+Cron setup: [`docs/forward_cron.md`](./docs/forward_cron.md).
+
+Registry: `data/processed/forward_forecasts.parquet` (labels filled after ~30 trading days via `forward_resolve`).
+
 ## Roadmap
 
-The full plan (phases, priorities, risks, portfolio checklist) is in [`roadmap_stock_intelligence.md`](./roadmap_stock_intelligence.md).
+Full plan (phases, priorities, risks, portfolio checklist): [`roadmap_stock_intelligence.md`](./roadmap_stock_intelligence.md).
 
 **Priorities:**
 
@@ -81,10 +114,6 @@ The full plan (phases, priorities, risks, portfolio checklist) is in [`roadmap_s
 2. **Production:** queue + worker, experiments, observability, CI
 3. **Differentiator:** Neo4j and GraphRAG
 4. **Bonus:** sentiment fine-tuning, optionally GNN
-
-## Status
-
-The repository is in early setup: documentation and roadmap are in place; code will follow the phased plan.
 
 ## License
 

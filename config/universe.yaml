@@ -20,3 +20,26 @@ tickers:
   - MRK
   - COST
   - PEP
+
+# Company names for text search (GDELT DOC API has no ticker field)
+names:
+  AAPL: Apple Inc
+  MSFT: Microsoft
+  GOOGL: Alphabet
+  AMZN: Amazon
+  META: Meta Platforms
+  NVDA: NVIDIA
+  BRK-B: Berkshire Hathaway
+  JPM: JPMorgan
+  V: Visa
+  UNH: UnitedHealth
+  XOM: Exxon Mobil
+  JNJ: Johnson & Johnson
+  PG: Procter & Gamble
+  MA: Mastercard
+  HD: Home Depot
+  CVX: Chevron
+  ABBV: AbbVie
+  MRK: Merck
+  COST: Costco
+  PEP: PepsiCo
